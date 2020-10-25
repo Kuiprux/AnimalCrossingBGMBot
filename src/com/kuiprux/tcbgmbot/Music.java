@@ -23,13 +23,12 @@ public class Music {
 			musicData = ByteBuffer.wrap(bytes);
 	}
 	
-	public byte[] getBytes(int index, int length) {
+	public int getBytes(byte[] data, int index, int length) {
 		if(musicData == null)
-			return null;
-		byte[] data = new byte[length];
-		int actualLength = Math.min(length, musicData.remaining());
+			return 0;
+		int actualLength = Math.min(length, musicData.capacity()-index);
 		musicData.get(index, data, 0, actualLength);
-		return data;
+		return actualLength;
 	}
 	
 	public int getByteLength() {
