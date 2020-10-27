@@ -58,4 +58,7 @@ public class TCBBSinePlayer implements TCBBPlayer{
 		return String.format("%8s", Integer.toBinaryString(val & 0xFF)).replace(' ', '0');
 	}
 */
+
+	@Override
+	public void addTransition(Transition transition) {}
 }

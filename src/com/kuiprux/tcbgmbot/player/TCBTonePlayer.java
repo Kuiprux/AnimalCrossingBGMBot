@@ -8,7 +8,7 @@ import java.util.List;
 import com.kuiprux.tcbgmbot.Music;
 import com.kuiprux.tcbgmbot.TCBGMBot;
 
-public class TCBBMP3Player implements TCBBPlayer {
+public class TCBTonePlayer implements TCBBPlayer {
 
 	PlayState state = PlayState.STOPPED;
 	boolean loop = true;
@@ -65,8 +65,8 @@ public class TCBBMP3Player implements TCBBPlayer {
 		transitionList.add(transition);
 	}
 	
-	private short processMusicShort(short datum, boolean increaseFrame) {
-		//int volume = this.volume;
+	private short processMusicShort(short datum) {
+		int volume = this.volume;
 		if (countingFrames < 0) {
 			if (transitionList.size() > 0) {
 				countingFrames = 0;
@@ -80,28 +80,24 @@ public class TCBBMP3Player implements TCBBPlayer {
 			Transition transition = transitionList.get(0);
 			switch (transition.mode) {
 			case FADE_IN:
-				volume = (int) (transition.value * ((float) countingFrames / (transition.duration*48)));
+				volume = (int) (beforeValue * ((float) countingFrames / transition.duration*4*48));
 				break;
 			case FADE_OUT:
-				//System.out.println(beforeValue + "\t" + countingFrames + "\t" + transition.duration*48 + "\t" + (1-(float) countingFrames / (transition.duration*48)));
-				volume = (int) (beforeValue * (1 - (float) countingFrames / (transition.duration*48)));
+				System.out.println(beforeValue + "\t" + countingFrames + "\t" + transition.duration);
+				volume = (int) (beforeValue * (1 - (float) countingFrames / transition.duration*4*48));
 				break;
 			case SET_VOLUME:
 				volume = transition.value;
 			}
 
-			if (transition.duration*48 <= countingFrames) {
-				System.out.println("a " + volume);
+			if (countingFrames >= transition.duration*4*48) {
 				if (transition.mode == TransitionMode.SET_VOLUME) {
 					volume = beforeValue;
-					System.out.println("b " + volume);
 				}
-				System.out.println("c " + volume);
 				transitionList.remove(0);
 				countingFrames = 0;
 			} else {
-				if(increaseFrame)
-					countingFrames++;
+				countingFrames++;
 			}
 			
 			//System.out.println(transition.mode + "\t" + datum + "\t" + volume + "\t" + (datum * volume / 100F));
@@ -118,11 +114,11 @@ public class TCBBMP3Player implements TCBBPlayer {
 			do {
 				int actualLength = music.getBytes(data, index, buffer.capacity() - putLength); // TODO
 				for (int i = 0; i < data.length/4; i++) {
-					short valLeft = processMusicShort((short)(((data[i*4] & 0xFF) << 8) | (data[i*4+1] & 0xFF)), true);
+					short valLeft = processMusicShort((short)(((data[i*4] & 0xFF) << 8) | (data[i*4+1] & 0xFF)));
 					data[i*4] = (byte)((valLeft >> 8) & 0xff);
 					data[i*4+1] = (byte)(valLeft & 0xff);
 					
-					short valRight = processMusicShort((short)(((data[i*4+2] & 0xFF) << 8) | (data[i*4+3] & 0xFF)), false);
+					short valRight = processMusicShort((short)(((data[i*4+2] & 0xFF) << 8) | (data[i*4+3] & 0xFF)));
 					data[i*4+2] = (byte)((valRight >> 8) & 0xff);
 					data[i*4+3] = (byte)(valRight & 0xff);
 				}

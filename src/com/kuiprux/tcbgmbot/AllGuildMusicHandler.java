@@ -34,6 +34,10 @@ public class AllGuildMusicHandler {
 		return musicManager;
 	}
 	
+	public synchronized GuildMusicManager tempGetGMM(Guild guild) {
+		return getGuildMusicManager(guild);
+	}
+	
 	public void play(Guild guild, MessageChannel sentChannel, User sender) {
 		checkAndJoin(guild, sentChannel, sender);
 		GuildMusicManager gmm = getGuildMusicManager(guild);

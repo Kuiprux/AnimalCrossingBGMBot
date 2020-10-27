@@ -1,6 +1,7 @@
 package com.kuiprux.tcbgmbot;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Map;
 
 import com.kuiprux.tcbgmbot.player.TCBBPlayer;
@@ -25,6 +26,7 @@ public class AudioPlayerSendHandler implements AudioSendHandler {
 	public AudioPlayerSendHandler(Map<String, TCBBPlayer> audioPlayerMap) {
 		this.audioPlayerMap = audioPlayerMap;
 		this.buffer = ByteBuffer.allocate(960 * 4);
+		this.buffer.order(ByteOrder.BIG_ENDIAN);
 	}
 
 	@Override
