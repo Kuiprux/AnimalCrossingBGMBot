@@ -24,7 +24,7 @@ public class TCBBMP3Player implements TCBBPlayer {
 		if (state != PlayState.PLAYING)
 			return false;
 		buffer.clear();
-		//update();
+		// update();
 		createMusicBuffer(buffer);
 		return true;
 	}
@@ -41,32 +41,21 @@ public class TCBBMP3Player implements TCBBPlayer {
 		volume = vol;
 	}
 
-/*
-	private void update() {
-		if(countingMillis < 0) {
-			if(transitionList.size() > 0) {
-				countingMillis = 0;
-			}
-		} else {
-			if(transitionList.size() == 0) // Just in case
-				countingMillis = -1;
-			Transition transition = transitionList.get(0);
-			switch(transition.mode) {
-			case FADE_IN:
-				volume = transi
-			case FADE_OUT:
-			case SET_VOLUME:
-			}
-		}
-	}
-*/
-	
+	/*
+	 * private void update() { if(countingMillis < 0) { if(transitionList.size() >
+	 * 0) { countingMillis = 0; } } else { if(transitionList.size() == 0) // Just in
+	 * case countingMillis = -1; Transition transition = transitionList.get(0);
+	 * switch(transition.mode) { case FADE_IN: volume = transi case FADE_OUT: case
+	 * SET_VOLUME: } } }
+	 */
+
 	public void addTransition(Transition transition) {
 		transitionList.add(transition);
 	}
-	
+
 	private short processMusicShort(short datum, boolean increaseFrame) {
-		//int volume = this.volume;
+		System.out.println(volume);
+		// int volume = this.volume;
 		if (countingFrames < 0) {
 			if (transitionList.size() > 0) {
 				countingFrames = 0;
@@ -75,38 +64,31 @@ public class TCBBMP3Player implements TCBBPlayer {
 		} else if (transitionList.size() == 0) {
 			countingFrames = -1;
 		}
-		
-		if(countingFrames >= 0) {
+
+		if (countingFrames >= 0) {
 			Transition transition = transitionList.get(0);
 			switch (transition.mode) {
 			case FADE_IN:
-				volume = (int) (transition.value * ((float) countingFrames / (transition.duration*48)));
+				volume = (int) (transition.value * ((float) countingFrames / (transition.duration * 48)));
 				break;
 			case FADE_OUT:
-				//System.out.println(beforeValue + "\t" + countingFrames + "\t" + transition.duration*48 + "\t" + (1-(float) countingFrames / (transition.duration*48)));
-				volume = (int) (beforeValue * (1 - (float) countingFrames / (transition.duration*48)));
+				volume = (int) (beforeValue * (1 - (float) countingFrames / (transition.duration * 48)));
 				break;
 			case SET_VOLUME:
 				volume = transition.value;
 			}
 
-			if (transition.duration*48 <= countingFrames) {
-				System.out.println("a " + volume);
-				if (transition.mode == TransitionMode.SET_VOLUME) {
+			if (transition.duration < 0 || transition.duration * 48 <= countingFrames) {
+				if (transition.duration >= 0 && transition.mode == TransitionMode.SET_VOLUME) {
 					volume = beforeValue;
-					System.out.println("b " + volume);
 				}
-				System.out.println("c " + volume);
 				transitionList.remove(0);
 				countingFrames = 0;
 			} else {
-				if(increaseFrame)
+				if (increaseFrame)
 					countingFrames++;
 			}
-			
-			//System.out.println(transition.mode + "\t" + datum + "\t" + volume + "\t" + (datum * volume / 100F));
 		}
-		//System.out.println(datum + "\t" + volume + "\t" + (short) (datum * volume / 100F));
 		return (short) (datum * volume / 100F);
 	}
 
@@ -117,14 +99,16 @@ public class TCBBMP3Player implements TCBBPlayer {
 			int putLength = 0;
 			do {
 				int actualLength = music.getBytes(data, index, buffer.capacity() - putLength); // TODO
-				for (int i = 0; i < data.length/4; i++) {
-					short valLeft = processMusicShort((short)(((data[i*4] & 0xFF) << 8) | (data[i*4+1] & 0xFF)), true);
-					data[i*4] = (byte)((valLeft >> 8) & 0xff);
-					data[i*4+1] = (byte)(valLeft & 0xff);
-					
-					short valRight = processMusicShort((short)(((data[i*4+2] & 0xFF) << 8) | (data[i*4+3] & 0xFF)), false);
-					data[i*4+2] = (byte)((valRight >> 8) & 0xff);
-					data[i*4+3] = (byte)(valRight & 0xff);
+				for (int i = 0; i < data.length / 4; i++) {
+					short valLeft = processMusicShort((short) (((data[i * 4] & 0xFF) << 8) | (data[i * 4 + 1] & 0xFF)),
+							true);
+					data[i * 4] = (byte) ((valLeft >> 8) & 0xff);
+					data[i * 4 + 1] = (byte) (valLeft & 0xff);
+
+					short valRight = processMusicShort(
+							(short) (((data[i * 4 + 2] & 0xFF) << 8) | (data[i * 4 + 3] & 0xFF)), false);
+					data[i * 4 + 2] = (byte) ((valRight >> 8) & 0xff);
+					data[i * 4 + 3] = (byte) (valRight & 0xff);
 				}
 				buffer.put(Arrays.copyOfRange(data, 0, actualLength));
 				index += actualLength; // TODO �끂�옒�걹�굹硫� stopped濡� 諛붽씀湲�
@@ -133,7 +117,6 @@ public class TCBBMP3Player implements TCBBPlayer {
 					index = 0;
 				}
 			} while (putLength < buffer.capacity() && loop);
-			// TODO loop
 			if (!loop && index >= music.getByteLength()) {
 				setPlayState(PlayState.STOPPED);
 			}

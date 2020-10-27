@@ -32,6 +32,8 @@ public class Music {
 	}
 	
 	public int getByteLength() {
+		if(musicData == null)
+			return 0;
 		return musicData.capacity();
 	}
 }

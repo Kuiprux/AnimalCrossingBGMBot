@@ -13,9 +13,26 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class MusicLoader {
 
-	
 	private Map<String, Music> musics = new HashMap<>();
+	private Map<String, ToneGroup> toneGroups = new HashMap<>();
 
+	public void loadToneGroup(String filename, String name) {
+		try {			
+			toneGroups.put(name, new ToneGroup(filename));
+		} catch (IOException | UnsupportedAudioFileException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void unloadToneGroup(String name) {
+		toneGroups.remove(name);
+	}
+	
+	public ToneGroup getToneGroup(String name) {
+		return toneGroups.get(name);
+	}
+
+	
 	public void loadMusic(String filename, String name) {
 		try {			
 			musics.put(name, new Music(filename));
