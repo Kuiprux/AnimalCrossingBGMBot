@@ -16,9 +16,9 @@ public class MusicLoader {
 	private Map<String, Music> musics = new HashMap<>();
 	private Map<String, ToneGroup> toneGroups = new HashMap<>();
 
-	public void loadToneGroup(String filename, String name) {
+	public void loadToneGroup(String directoryName, String filename, String name) {
 		try {			
-			toneGroups.put(name, new ToneGroup(filename));
+			toneGroups.put(name, new ToneGroup(directoryName, filename));
 		} catch (IOException | UnsupportedAudioFileException e) {
 			e.printStackTrace();
 		}
