@@ -7,40 +7,51 @@ import java.util.List;
 
 import com.kuiprux.tcbgmbot.Music;
 import com.kuiprux.tcbgmbot.TCBGMBot;
+import com.kuiprux.tcbgmbot.ToneGroup;
 
 public class TCBTonePlayer extends TCBBMP3Player {
 	
 	//260ms
 	int overlapFrame;
-	List<Tone> toneList = new ArrayList<>();
+	List<ToneInfo> toneList = new ArrayList<>();
 			
 	public TCBTonePlayer(int overlapFrame) {
 		this.overlapFrame = overlapFrame;
 	}
 	
-	public void addTone(Tone tone) {
+	public void addTone(ToneInfo tone) {
 		toneList.add(tone);
+	}
+	
+	public void clearTone() {
+		toneList.clear();
 	}
 
 	@Override
-	protected void createMusicBuffer(ByteBuffer buffer) {
+	//TODO idk if loop function is needed, but it it is, implement it.
+	protected void createMusicBuffer(ByteBuffer buffer) { //TODO Rewrite this method
 		if (state == PlayState.PLAYING) {
-			Music music = TCBGMBot.ml.getMusic("testMusic"); // TODO nullpointerexception
-			byte[] data = new byte[buffer.capacity()];
-			int putLength = 0;
-			do {
-				int actualLength = music.getBytes(data, index, buffer.capacity() - putLength); // TODO
-				processMusicBytes(data);
-				buffer.put(Arrays.copyOfRange(data, 0, actualLength));
-				index += actualLength; // TODO �끂�옒�걹�굹硫� stopped濡� 諛붽씀湲�
-				putLength += actualLength;
-				if (putLength < buffer.capacity() && loop) {
-					index = 0;
-				}
-			} while (putLength < buffer.capacity() && loop);
-			if (!loop && index >= music.getByteLength()) {
-				setPlayState(PlayState.STOPPED);
+			List<Integer> toneOffset = new ArrayList<>();
+			List<ByteBuffer> toneBuffers = new ArrayList<>();
+			int tmpIndex = index;
+			int toneStartIndex = 0;
+			for(int i = 0; i < toneList.size(); i++) {
+				if(tmpIndex >= index+buffer.capacity())
+					break;
+				int readStartIndex = Math.max(index - toneStartIndex, toneStartIndex);
+				ToneInfo tone = toneList.get(i);
+				ToneGroup tGroup = TCBGMBot.ml.getToneGroup("testTone"); //TODO
+				byte[] data = new byte[buffer.capacity()];
+				int putLength = tGroup.getBytes(tone.name, data, readStartIndex, buffer.capacity()-readStartIndex); 
+				ByteBuffer buf = ByteBuffer.allocate(putLength);
+				buf.put(Arrays.copyOfRange(data, 0, putLength));
+				toneBuffers.add(buf);
+				toneOffset.add(tone.overlapFrame);
+				toneStartIndex += (tone.overlapFrame < 0 ? overlapFrame : tone.overlapFrame);
 			}
+			Util.mergeMusicBytes(toneBuffers.toArray
+					(new ByteBuffer[0]), toneOffset.stream().mapToInt(i->i).toArray(), buffer);
+			processMusicBytes(buffer);
 		}
 	}
 }

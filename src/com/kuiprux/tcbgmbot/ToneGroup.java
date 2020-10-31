@@ -22,7 +22,7 @@ public class ToneGroup {
 		int toneNameStart = fileprefix.length();
 		for(File file : dir.listFiles()) {
 			if(file.getName().startsWith(fileprefix)) {
-				toneData.put(file.getName().substring(toneNameStart), loadTone(file));
+				toneData.put(file.getName().substring(toneNameStart).split("\\.")[0], loadTone(file));
 			}
 		}
 	}
@@ -38,6 +38,8 @@ public class ToneGroup {
 		if(toneData == null || toneData.get(name) == null)
 			return 0;
 		ByteBuffer tone = toneData.get(name);
+		if(tone.capacity() <= index)
+			return 0;
 		int actualLength = Math.min(length, tone.capacity()-index);
 		tone.get(index, data, 0, actualLength);
 		return actualLength;

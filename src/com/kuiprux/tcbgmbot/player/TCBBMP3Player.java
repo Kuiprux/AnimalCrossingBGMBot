@@ -12,7 +12,7 @@ public class TCBBMP3Player implements TCBBPlayer {
 
 	PlayState state = PlayState.STOPPED;
 	boolean loop = true;
-	int index = 0;
+	int index = 0; //byte index, not short or frame
 	int volume = 100;
 
 	List<Transition> transitionList = new ArrayList<Transition>();
@@ -44,7 +44,7 @@ public class TCBBMP3Player implements TCBBPlayer {
 	public void addTransition(Transition transition) {
 		transitionList.add(transition);
 	}
-	
+
 	protected void processMusicBytes(byte[] data) {
 		for (int i = 0; i < data.length / 4; i++) {
 			short valLeft = processMusicShort((short) (((data[i * 4] & 0xFF) << 8) | (data[i * 4 + 1] & 0xFF)),
@@ -56,6 +56,16 @@ public class TCBBMP3Player implements TCBBPlayer {
 					(short) (((data[i * 4 + 2] & 0xFF) << 8) | (data[i * 4 + 3] & 0xFF)), false);
 			data[i * 4 + 2] = (byte) ((valRight >> 8) & 0xff);
 			data[i * 4 + 3] = (byte) (valRight & 0xff);
+		}
+	}
+	
+	protected void processMusicBytes(ByteBuffer data) {
+		while(data.hasRemaining()) {
+			short valLeft = processMusicShort(data.getShort(), true);
+			short valRight = processMusicShort(data.getShort(), true);
+			data.position(data.position()-4);
+			data.putShort(valLeft);
+			data.putShort(valRight);
 		}
 	}
 

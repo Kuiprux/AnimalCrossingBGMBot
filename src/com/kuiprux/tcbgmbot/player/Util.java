@@ -7,7 +7,7 @@ public class Util {
 	public static void mergeMusicBytes(ByteBuffer[] data, int interval, ByteBuffer dst) {
 		mergeMusicBytes(data, new int[] {interval}, dst);
 	}
-	
+
 	public static void mergeMusicBytes(ByteBuffer[] data, int[] intervals, ByteBuffer dst) {
 		int[] addedSamples = new int[dst.capacity()/2];
 		int startPoint = 0;

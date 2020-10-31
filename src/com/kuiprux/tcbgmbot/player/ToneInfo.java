@@ -1,15 +1,15 @@
 package com.kuiprux.tcbgmbot.player;
 
-public class Tone {
+public class ToneInfo {
 
 	public final String name;
 	public final int overlapFrame;
 	
-	public Tone(String name) {
+	public ToneInfo(String name) {
 		this(name, -1);
 	}
 	
-	public Tone(String name, int overlapFrame) {
+	public ToneInfo(String name, int overlapFrame) {
 		this.name = name;
 		this.overlapFrame = overlapFrame;
 	}

@@ -1,5 +1,7 @@
 package com.kuiprux.tcbgmbot;
 
+import com.kuiprux.tcbgmbot.player.TCBTonePlayer;
+import com.kuiprux.tcbgmbot.player.ToneInfo;
 import com.kuiprux.tcbgmbot.player.Transition;
 import com.kuiprux.tcbgmbot.player.TransitionMode;
 
@@ -38,6 +40,16 @@ public class TCBBCommandHandler extends ListenerAdapter {
 					TCBGMBot.agm.tempGetGMM(event.getGuild()).getSendHandler().audioPlayerMap.get("test")
 					.addTransition(new Transition(TransitionMode.SET_VOLUME, -1, 70));
 					break;
+				case "--settone":
+					TCBTonePlayer pl = (TCBTonePlayer) TCBGMBot.agm.tempGetGMM(event.getGuild()).getSendHandler().audioPlayerMap.get("testtone");
+					pl.clearTone();
+					pl.addTone(new ToneInfo("A3"));
+					pl.addTone(new ToneInfo("B3"));
+					pl.addTone(new ToneInfo("C4"));
+					pl.addTone(new ToneInfo("D4"));
+					pl.addTone(new ToneInfo("E4"));
+					pl.addTone(new ToneInfo("F4"));
+					pl.addTone(new ToneInfo("G4"));
 				}
 			}
 		}
