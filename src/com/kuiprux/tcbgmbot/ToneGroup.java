@@ -38,9 +38,10 @@ public class ToneGroup {
 		if(toneData == null || toneData.get(name) == null)
 			return 0;
 		ByteBuffer tone = toneData.get(name);
-		if(tone.capacity() <= index)
-			return 0;
 		int actualLength = Math.min(length, tone.capacity()-index);
+		//System.out.println("\t\t\t" + name + "\t" + tone.capacity() + "\t" + index + "\t" + actualLength + "\t" + length);
+		if(actualLength <= 0)
+			return 0;
 		tone.get(index, data, 0, actualLength);
 		return actualLength;
 	}

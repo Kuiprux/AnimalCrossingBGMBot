@@ -5,10 +5,10 @@ import com.kuiprux.tcbgmbot.player.ToneInfo;
 import com.kuiprux.tcbgmbot.player.Transition;
 import com.kuiprux.tcbgmbot.player.TransitionMode;
 
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class TCBBCommandHandler extends ListenerAdapter {
 
@@ -16,6 +16,7 @@ public class TCBBCommandHandler extends ListenerAdapter {
 	public void onMessageReceived(MessageReceivedEvent event) {
 		MessageChannel chnl = event.getChannel();
 		User sender = event.getAuthor();
+		System.out.println("bb");
 		if(!sender.isBot()) {
 			System.out.println(sender.getId());
 			if(sender.getId().equals("368687855003893763")) {

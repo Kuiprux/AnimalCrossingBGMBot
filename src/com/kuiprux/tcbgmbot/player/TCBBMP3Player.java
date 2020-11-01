@@ -70,7 +70,6 @@ public class TCBBMP3Player implements TCBBPlayer {
 	}
 
 	protected short processMusicShort(short datum, boolean increaseFrame) {
-		System.out.println(volume);
 		// int volume = this.volume;
 		if (countingFrames < 0) {
 			if (transitionList.size() > 0) {

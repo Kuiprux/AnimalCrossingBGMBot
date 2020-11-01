@@ -3,14 +3,13 @@ package com.kuiprux.tcbgmbot;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.dv8tion.jda.core.entities.Channel;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.managers.AudioManager;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.GuildChannel;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.managers.AudioManager;
 
 public class AllGuildMusicHandler {
 
@@ -60,7 +59,7 @@ public class AllGuildMusicHandler {
 	    audioManager.openAudioConnection(vChannel);
 	}
 	private VoiceChannel getVoiceChannel(Guild guild, User sender) {
-		for(Channel channel : guild.getChannels(true)) {
+		for(GuildChannel channel : guild.getChannels(true)) {
 			if(channel instanceof VoiceChannel) {
 				for(Member member : channel.getMembers()) {
 					if(sender.equals(member.getUser())) {
